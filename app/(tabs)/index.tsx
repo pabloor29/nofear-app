@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import Auth from '../../components/Auth';
 import Account from '../../components/Account';
@@ -19,9 +19,9 @@ export default function Index() {
   }, []);
 
   return (
-    <View className="flex-1">
+    <View className="flex justify-center items-center h-screen">
       {session && session.user ? (
-        <Account session={session} />
+        <Text>No house detected...</Text>
       ) : (
         <Auth />
       )}
