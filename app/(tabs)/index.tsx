@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
-import { supabase } from '../../lib/supabase';
-import Auth from '../../components/Auth';
-import Account from '../../components/Account';
-import { Session } from '@supabase/supabase-js';
+import { Session } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
+import { Text, View } from "react-native";
+import Auth from "../../components/Auth";
+import { supabase } from "../../lib/supabase";
 
 export default function Index() {
   const [session, setSession] = useState<Session | null>(null);
@@ -19,12 +18,8 @@ export default function Index() {
   }, []);
 
   return (
-    <View className="flex justify-center items-center h-screen">
-      {session && session.user ? (
-        <Text>No house detected...</Text>
-      ) : (
-        <Auth />
-      )}
+    <View className="flex-1 justify-center items-center">
+      {session && session.user ? <Text>No house detected...</Text> : <Auth />}
     </View>
   );
 }

@@ -31,8 +31,8 @@ export default function Auth() {
   }
 
   return (
-    <View className="flex-1 justify-center p-6 bg-white">
-      <Text className="text-3xl font-bold mb-8 text-center">NoFear App</Text>
+    <View className="p-6 bg-white w-screen h-screen flex-1 justify-center">
+      <Text className="text-3xl font-VictorMonoBold mb-8 text-center">NoFear</Text>
       
       <TextInput
         className="border border-gray-300 rounded-lg p-4 mb-4"
@@ -53,21 +53,21 @@ export default function Auth() {
       />
       
       <TouchableOpacity
-        className="bg-blue-500 rounded-lg p-4 mb-3"
+        className="bg-mainColor rounded-lg p-4 mb-3"
         onPress={signInWithEmail}
         disabled={loading}
       >
-        <Text className="text-white text-center font-semibold">
+        <Text className="text-white text-center font-SpaceGroteskBold">
           Se connecter
         </Text>
       </TouchableOpacity>
       
       <TouchableOpacity
-        className="border border-blue-500 rounded-lg p-4"
+        className="border border-mainColor rounded-lg p-4"
         onPress={signUpWithEmail}
         disabled={loading}
       >
-        <Text className="text-blue-500 text-center font-semibold">
+        <Text className="text-mainColor text-center font-SpaceGroteskBold">
           Créer un compte
         </Text>
       </TouchableOpacity>
