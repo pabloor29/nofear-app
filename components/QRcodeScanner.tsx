@@ -26,12 +26,13 @@ const QRcodeScanner = () => {
         return;
         }
 
-        if (parsed?.company === 'qr-code-scanner') 
+        if (parsed?.company === 'no-fear') 
         {
             router.push({
-                pathname: '/',
+                pathname: '/new-product',
                 params: {
                     readDeviceName: parsed['device-name'],
+                    readDeviceCategory: parsed['device-category'],
                     readDeviceCode: parsed['device-code'],
                 },
             });

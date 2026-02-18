@@ -5,16 +5,16 @@ import { supabase } from "../lib/supabase";
 import { useProfile } from '@/hooks/use-profile';
 
 export default function Account({ session }: { session: Session }) {
-  const [loading, setLoading] = useState(false);
-  const { profile, profileLoading } = useProfile();
+  const [loadingSession, setLoadingSession] = useState(false);
+  const { profile, loading } = useProfile();
 
-  if (profileLoading) return <ActivityIndicator />;
+  if (loading) return <ActivityIndicator />;
 
   async function signOut() {
-    setLoading(true);
+    setLoadingSession(true);
     const { error } = await supabase.auth.signOut();
     if (error) Alert.alert(error.message);
-    setLoading(false);
+    setLoadingSession(false);
   }
 
   return (
@@ -36,7 +36,7 @@ export default function Account({ session }: { session: Session }) {
       <TouchableOpacity
         className="bg-mainColor rounded-lg p-4"
         onPress={signOut}
-        disabled={loading}
+        disabled={loadingSession}
       >
         <Text className="text-clearColor text-center font-VictorMonoBold">
           Se déconnecter
