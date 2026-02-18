@@ -1,28 +1,62 @@
 import { useState } from 'react';
 import { Alert, View, TextInput, TouchableOpacity, Text } from 'react-native';
 import { supabase } from '../lib/supabase';
-import SignUp from './SignUp'; // adapte le chemin
 
-export default function Auth() {
+export default function SignUp({ onBack }: { onBack: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showSignUp, setShowSignUp] = useState(false);
 
-  if (showSignUp) {
-    return <SignUp onBack={() => setShowSignUp(false)} />;
-  }
-
-  async function signInWithEmail() {
+  async function signUpWithEmail() {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) Alert.alert(error.message);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      Alert.alert(error.message);
+      setLoading(false);
+      return;
+    }
+
+    // On insère les infos dans une table "profiles"
+    if (data.user) {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: data.user.id, // clé étrangère vers auth.users
+          email,
+          first_name: firstName,
+          last_name: lastName,
+        });
+
+      if (profileError) Alert.alert(profileError.message);
+      else Alert.alert('Vérifiez votre email pour confirmer votre inscription !');
+    }
+
     setLoading(false);
   }
 
   return (
     <View className="p-6 bg-white w-screen h-screen flex-1 justify-center">
       <Text className="text-3xl font-VictorMonoBold mb-8 text-center">NoFear</Text>
+
+      <TextInput
+        className="border border-gray-300 rounded-lg p-4 mb-4"
+        placeholder="Prénom"
+        value={firstName}
+        onChangeText={setFirstName}
+      />
+
+      <TextInput
+        className="border border-gray-300 rounded-lg p-4 mb-4"
+        placeholder="Nom"
+        value={lastName}
+        onChangeText={setLastName}
+      />
 
       <TextInput
         className="border border-gray-300 rounded-lg p-4 mb-4"
@@ -44,20 +78,20 @@ export default function Auth() {
 
       <TouchableOpacity
         className="bg-mainColor rounded-lg p-4 mb-3"
-        onPress={signInWithEmail}
+        onPress={signUpWithEmail}
         disabled={loading}
       >
         <Text className="text-white text-center font-SpaceGroteskBold">
-          Se connecter
+          Créer un compte
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         className="border border-mainColor rounded-lg p-4"
-        onPress={() => setShowSignUp(true)}
+        onPress={onBack}
       >
         <Text className="text-mainColor text-center font-SpaceGroteskBold">
-          Pas encore de compte ? Créer un compte
+          Déjà un compte ? Se connecter
         </Text>
       </TouchableOpacity>
     </View>
