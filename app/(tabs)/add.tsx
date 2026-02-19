@@ -65,14 +65,14 @@ export default function Add() {
   } else {
     return (
       <SafeAreaView className="flex flex-col justify-center items-center h-screen w-screen bg-clearColor">
-        <Stack.Screen options={{ title: "Overview", headerShown: false }} />
+        <Stack.Screen options={{ headerShown: false }} />
         <Text className="font-SpaceGroteskBold text-2xl text-mainColor mb-10">
           QR Code Scanner
         </Text>
 
         <QRcodeScanner />
 
-        <View className="w-full px-6">
+        {/* <View className="w-full px-6">
           <Link href={"/"} asChild>
             <Pressable className="bg-mainColor py-3 rounded-lg  mt-12">
               <Text className="text-clearColor font-SpaceGroteskBold text-center">
@@ -80,7 +80,7 @@ export default function Add() {
               </Text>
             </Pressable>
           </Link>
-        </View>
+        </View> */}
       </SafeAreaView>
     );
   }

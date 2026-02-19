@@ -12,7 +12,9 @@ import { useSession } from "@/hooks/use-session";
 import { useFonts } from "expo-font";
 
 import { Stack, useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+import { Image, View } from 'react-native';
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -20,10 +22,9 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-
   const router = useRouter();
-
   const { session, loading } = useSession();
+  const [minLoadingDone, setMinLoadingDone] = useState(false);
 
   const [fontsLoaded] = useFonts({
     PoiretOneRegular: require("@/assets/fonts/Poiret_One/PoiretOne-Regular.ttf"),
@@ -39,16 +40,35 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (!fontsLoaded || loading) return;
+    const timer = setTimeout(() => {
+      setMinLoadingDone(true);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!fontsLoaded || loading || !minLoadingDone) return;
 
     if (session) {
-      router.replace("/(tabs)");
+      router.replace('/(tabs)');
     } else {
-      router.replace("/(auth)");
+      router.replace('/(auth)');
     }
-  }, [session, loading, fontsLoaded]);
+  }, [session, loading, fontsLoaded, minLoadingDone]);
 
-  if (!fontsLoaded) return;
+  // Affiche le splash screen tant que les 2s ne sont pas écoulées
+  // ou que les fonts/session ne sont pas prêtes
+  if (!fontsLoaded || loading || !minLoadingDone) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F8F2F2' }}>
+        <Image
+          source={require('@/assets/images/logo/logo-001.png')}
+          style={{ width: 150, height: 150, resizeMode: 'contain' }}
+        />
+      </View>
+    );
+  }
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
