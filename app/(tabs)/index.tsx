@@ -1,15 +1,16 @@
 import { Session } from "@supabase/supabase-js";
 import { useEffect, useState, useCallback } from "react";
-import { ActivityIndicator, FlatList, Text, View, RefreshControl } from "react-native";
+import { ActivityIndicator, FlatList, Text, View, RefreshControl, Pressable } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { useProducts } from '@/hooks/use-products';
 import { LockOpen, Lock, HelpCircle } from "lucide-react-native";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 
 export default function Index() {
   const [session, setSession] = useState<Session | null>(null);
   const { products, loading, refetch } = useProducts();
   const [refreshing, setRefreshing] = useState(false);
+  const router = useRouter();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -70,7 +71,10 @@ export default function Index() {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           renderItem={({ item }) => (
-            <View className="border border-gray-200 rounded-lg p-4 mb-3 flex-row justify-between items-center">
+            <Pressable
+              className="border border-gray-200 rounded-lg p-4 mb-3 flex-row justify-between items-center"
+              onPress={() => router.push(`/product/${item.id}`)}
+            >
               <View className="flex-1">
                 <Text className="text-lg font-SpaceGroteskBold">{item.name}</Text>
                 <Text className="text-gray-500 font-SpaceGroteskRegular">{item.category}</Text>
@@ -81,7 +85,7 @@ export default function Index() {
                 )}
               </View>
               <StateIcon state={item.state} />
-            </View>
+            </Pressable>
           )}
         />
       )}

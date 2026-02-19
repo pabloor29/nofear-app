@@ -75,6 +75,8 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(auth)" />
+        <Stack.Screen name="new-product" />
+        <Stack.Screen name="product/[id]" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

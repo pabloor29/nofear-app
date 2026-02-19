@@ -36,9 +36,19 @@ export default function ProductCreator({ session }: { session: Session }) {
       return;
     }
 
+    // JSON initial lors de la création
+    const initialState = {
+      history: [
+        {
+          code: 99,
+          date: new Date().toISOString(),
+        }
+      ]
+    };
+
     const { error } = await supabase.from("products").insert([
       {
-        user_id: currentSession?.user?.id,
+        user_id: currentSession.user.id,
         name: deviceName,
         category: deviceCategory,
         security_key: deviceCode,
@@ -46,6 +56,7 @@ export default function ProductCreator({ session }: { session: Session }) {
         zipcode: deviceZipCode,
         city: deviceCity,
         country: deviceCountry,
+        state: initialState,
       },
     ]);
 
