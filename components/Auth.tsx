@@ -24,6 +24,7 @@ export default function Auth() {
     <View className="p-6 bg-white w-screen h-screen flex-1 justify-center">
       <Text className="text-3xl font-VictorMonoBold mb-8 text-center">NoFear</Text>
 
+      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">Email</Text>
       <TextInput
         className="border border-gray-300 rounded-lg p-4 mb-4"
         placeholder="Email"
@@ -33,6 +34,7 @@ export default function Auth() {
         keyboardType="email-address"
       />
 
+      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">Mot de passe</Text>
       <TextInput
         className="border border-gray-300 rounded-lg p-4 mb-6"
         placeholder="Mot de passe"

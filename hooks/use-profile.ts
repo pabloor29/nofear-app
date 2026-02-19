@@ -14,19 +14,22 @@ export function useProfile() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchProfile = async () => {
     if (!session) return;
 
-    supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', session.user.id)
-      .single()
-      .then(({ data, error }) => {
-        if (!error) setProfile(data);
-        setLoading(false);
-      });
+      .single();
+
+    if (!error && data) setProfile(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchProfile();
   }, [session]);
 
-  return { profile, loading };
+  return { profile, loading, refetch: fetchProfile };
 }

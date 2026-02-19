@@ -77,6 +77,7 @@ export default function RootLayout() {
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="new-product" />
         <Stack.Screen name="product/[id]" />
+        <Stack.Screen name="edit-profile" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
