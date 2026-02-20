@@ -5,12 +5,19 @@ import { supabase } from "../../lib/supabase";
 import { useProducts } from '@/hooks/use-products';
 import { LockOpen, Lock, HelpCircle } from "lucide-react-native";
 import { useFocusEffect, useRouter } from "expo-router";
+import { useThemeStyles } from "@/hooks/use-theme-styles";
+
+type StateEntry = {
+  code: number;
+  date: string;
+};
 
 export default function Index() {
   const [session, setSession] = useState<Session | null>(null);
   const { products, loading, refetch } = useProducts();
   const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
+  const { bg, text, textSecondary, border, card } = useThemeStyles();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -36,15 +43,26 @@ export default function Index() {
 
   if (!session) return null;
 
-  const StateIcon = ({ state }: { state: string | null }) => {
-    if (state === '1') return <Lock size={24} color="green" />;
-    if (state === '0') return <LockOpen size={24} color="red" />;
+  const StateIcon = ({ state }: { state: { history: StateEntry[] } | null }) => {
+    if (!state?.history?.length) return <HelpCircle size={24} color="gray" />;
+    
+    const lastCode = state.history[state.history.length - 1].code;
+
+    if (lastCode === 1) return <Lock size={24} color="green" />;
+    if (lastCode === 0) return <LockOpen size={24} color="red" />;
     return <HelpCircle size={24} color="gray" />;
   };
-
   return (
-    <View className="flex-1 pt-20 p-6 bg-white">
-      <Text className="text-2xl font-VictorMonoBold mb-6">Mes produits</Text>
+    <View 
+      className="flex-1 pt-20 p-6 bg-white"
+      style={bg}
+    >
+      <Text 
+        className="text-2xl font-VictorMonoBold mb-6"
+        style={text}
+      >
+        Mes produits
+      </Text>
 
       {loading && !refreshing ? (
         <ActivityIndicator />
@@ -57,7 +75,10 @@ export default function Index() {
           }
           ListEmptyComponent={
             <View className="flex-1 justify-center items-center mt-20">
-              <Text className="text-gray-400 font-SpaceGroteskRegular">
+              <Text 
+                className="text-gray-400 font-SpaceGroteskRegular"
+                style={text}
+              >
                 Aucun produit détecté...
               </Text>
             </View>
@@ -76,10 +97,23 @@ export default function Index() {
               onPress={() => router.push(`/product/${item.id}`)}
             >
               <View className="flex-1">
-                <Text className="text-lg font-SpaceGroteskBold">{item.name}</Text>
-                <Text className="text-gray-500 font-SpaceGroteskRegular">{item.category}</Text>
+                <Text 
+                  className="text-lg font-SpaceGroteskBold"
+                  style={text}
+                >
+                  {item.name}
+                </Text>
+                <Text 
+                  className="font-SpaceGroteskRegular"
+                  style={text}
+                >
+                  {item.category}
+                </Text>
                 {item.city && (
-                  <Text className="text-gray-400 font-SpaceGroteskRegular text-sm mt-1">
+                  <Text 
+                    className="text-gray-400 font-SpaceGroteskRegular text-sm mt-1"
+                    style={text}
+                  >
                     {item.street}, {item.zipcode} {item.city}, {item.country}
                   </Text>
                 )}

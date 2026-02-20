@@ -5,11 +5,14 @@ import { Link, Stack } from "expo-router";
 import React, { useState, useEffect } from "react";
 import { Pressable, SafeAreaView, Text, View } from "react-native";
 import { supabase } from "../../lib/supabase";
+import { useThemeStyles } from "@/hooks/use-theme-styles";
 
 export default function Add() {
   const [permission, requestPermission] = useCameraPermissions();
   const isPermissionGranted = Boolean(permission?.granted);
   const [session, setSession] = useState<Session | null>(null);
+
+  const { bg, text, textSecondary, border, card } = useThemeStyles();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -23,7 +26,10 @@ export default function Add() {
 
   if (!session) {
     return (
-      <View className="flex-1 justify-center items-center h-screen w-screen px-6 bg-clearColor">
+      <View 
+        className="flex-1 justify-center items-center h-screen w-screen px-6"
+        style={bg}
+      >
         <Text className="text-mainColor text-xl font-PoiretOneRegular text-center">
           Create your account to add houses to your profile...
         </Text>
@@ -39,7 +45,10 @@ export default function Add() {
   } else if (!isPermissionGranted) {
     // Camera permissions are not granted yet.
     return (
-      <View className="flex flex-col justify-center items-center h-screen w-screen bg-clearColor">
+      <View 
+        className="flex flex-col justify-center items-center h-screen w-screen"
+        style={bg}
+      >
         <Text className="text-primaryGreen font-PoiretOneRegular text-xl text-center">
           We need your permission to use the camera...
         </Text>
@@ -64,7 +73,10 @@ export default function Add() {
     );
   } else {
     return (
-      <SafeAreaView className="flex flex-col justify-center items-center h-screen w-screen bg-clearColor">
+      <SafeAreaView 
+        className="flex flex-col justify-center items-center h-screen w-scree"
+        style={bg}
+      >
         <Stack.Screen options={{ headerShown: false }} />
         <Text className="font-SpaceGroteskBold text-2xl text-mainColor mb-10">
           QR Code Scanner

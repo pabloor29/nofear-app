@@ -9,6 +9,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useThemeStyles } from "@/hooks/use-theme-styles";
 
 type StateEntry = {
   code: number;
@@ -28,7 +29,6 @@ type Product = {
 };
 
 const stateLabel = (code: number) => {
-  if (code === 99) return { label: "Création", color: "text-blue-500" };
   if (code === 1) return { label: "Fermé", color: "text-green-500" };
   if (code === 0) return { label: "Ouvert", color: "text-red-500" };
   return { label: "Inconnu", color: "text-gray-400" };
@@ -50,6 +50,8 @@ export default function ProductDetail() {
   const [zipcode, setZipcode] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
+
+  const { bg, text, textSecondary, border, card } = useThemeStyles();
 
   useEffect(() => {
     supabase
@@ -98,56 +100,110 @@ export default function ProductDetail() {
 
   const history = product.state?.history ?? [];
 
+  // Séparer l'entrée de création (code 99) des autres entrées
+  const creationEntry = history.find((e) => e.code === 99);
+  const stateHistory = history.filter((e) => e.code !== 99);
+
   return (
-    <ScrollView className="flex-1 bg-white pt-20 px-6">
+    <ScrollView 
+      className="flex-1 pt-20 px-6"
+      style={bg}
+    >
       <Pressable onPress={() => router.back()} className="mb-6">
         <Text className="text-mainColor font-SpaceGroteskBold">← Retour</Text>
       </Pressable>
 
-      <Text className="text-2xl font-VictorMonoBold mb-8">
+      <Text 
+        className="text-2xl font-VictorMonoBold mb-8"
+        style={text}
+      >
         Détail du produit
       </Text>
 
+      {/* Date de création */}
+      <Text 
+        className="font-SpaceGroteskBold mb-1"
+        style={text}
+      >
+        Date de création
+      </Text>
+      <View className="border border-gray-100 bg-gray-50 rounded-lg p-3 mb-6">
+        <Text className="text-gray-500 font-SpaceGroteskRegular">
+          {creationEntry ? formatDate(creationEntry.date) : "Non disponible"}
+        </Text>
+      </View>
+
       {/* Champs modifiables */}
-      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">Nom</Text>
+      <Text 
+        className="font-SpaceGroteskBold text-gray-700 mb-1"
+        style={text}
+      >
+        Nom
+      </Text>
       <TextInput
-        className="border border-gray-300 rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        style={[text , border]}
         value={name}
         onChangeText={setName}
       />
 
-      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">Adresse</Text>
+      <Text 
+        className="font-SpaceGroteskBold text-gray-700 mb-1"
+        style={text}
+      >
+        Adresse
+      </Text>
       <TextInput
-        className="border border-gray-300 rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        style={[text , border]}
         value={street}
         onChangeText={setStreet}
       />
 
-      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">
+      <Text 
+        className="font-SpaceGroteskBold mb-1"
+        style={text}
+      >
         Code postal
       </Text>
       <TextInput
-        className="border border-gray-300 rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        style={[text , border]}
         value={zipcode}
         onChangeText={setZipcode}
       />
 
-      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">Ville</Text>
+      <Text 
+        className="font-SpaceGroteskBold mb-1"
+        style={text}
+      >
+        Ville
+      </Text>
       <TextInput
-        className="border border-gray-300 rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        style={[text , border]}
         value={city}
         onChangeText={setCity}
       />
 
-      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">Pays</Text>
+      <Text 
+        className="font-SpaceGroteskBold mb-1"
+        style={text}
+      >
+        Pays
+      </Text>
       <TextInput
-        className="border border-gray-300 rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        style={[text , border]}
         value={country}
         onChangeText={setCountry}
       />
 
       {/* Champs non modifiables */}
-      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">
+      <Text 
+        className="font-SpaceGroteskBold mb-1"
+        style={text}
+      >
         Catégorie
       </Text>
       <View className="border border-gray-100 bg-gray-50 rounded-lg p-3 mb-4">
@@ -156,7 +212,10 @@ export default function ProductDetail() {
         </Text>
       </View>
 
-      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">
+      <Text 
+        className="font-SpaceGroteskBold mb-1"
+        style={text}
+      >
         Clé de sécurité
       </Text>
       <View className="border border-gray-100 bg-gray-50 rounded-lg p-3 mb-8">
@@ -169,20 +228,25 @@ export default function ProductDetail() {
         onPress={handleSave}
         disabled={saving}
       >
-        <Text className="text-white text-center font-SpaceGroteskBold">
+        <Text className="text-clearColor text-center font-VictorMonoBold">
           {saving ? "Sauvegarde..." : "Sauvegarder"}
         </Text>
       </Pressable>
 
-      {/* Historique */}
-      <Text className="text-xl font-VictorMonoBold mb-4">Historique</Text>
+      {/* Historique (uniquement code 0 et 1) */}
+      <Text 
+        className="text-xl font-VictorMonoBold mb-4"
+        style={text}
+      >
+        Historique
+      </Text>
 
-      {history.length === 0 ? (
+      {stateHistory.length === 0 ? (
         <Text className="text-gray-400 font-SpaceGroteskRegular mb-10">
           Aucun historique.
         </Text>
       ) : (
-        [...history].reverse().map((entry, index) => {
+        [...stateHistory].reverse().map((entry, index) => {
           const { label, color } = stateLabel(entry.code);
           return (
             <View

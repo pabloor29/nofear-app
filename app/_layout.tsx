@@ -1,29 +1,19 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
+import { AppSettingsProvider, useAppSettings } from '@/context/app-settings';
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Stack, useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
+import { useFonts } from 'expo-font';
+import { View, Image } from 'react-native';
+import { useSession } from '@/hooks/use-session';
 import "./global.css";
 
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useSession } from "@/hooks/use-session";
-import { useFonts } from "expo-font";
-
-import { Stack, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-
-import { Image, View } from 'react-native';
-
-export const unstable_settings = {
-  anchor: "(tabs)",
-};
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const router = useRouter();
+function ThemedApp() {
+  const { theme } = useAppSettings();
+  const systemColorScheme = useColorScheme();
   const { session, loading } = useSession();
+  const router = useRouter();
   const [minLoadingDone, setMinLoadingDone] = useState(false);
 
   const [fontsLoaded] = useFonts({
@@ -39,17 +29,17 @@ export default function RootLayout() {
     VictorMonoMedium: require("@/assets/fonts/Victor_Mono_titre/static/VictorMono-Medium.ttf"),
   });
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setMinLoadingDone(true);
-    }, 2000);
+  const activeTheme =
+    theme === 'system' ? systemColorScheme :
+    theme === 'dark' ? 'dark' : 'light';
 
+  useEffect(() => {
+    const timer = setTimeout(() => setMinLoadingDone(true), 2000);
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     if (!fontsLoaded || loading || !minLoadingDone) return;
-
     if (session) {
       router.replace('/(tabs)');
     } else {
@@ -57,8 +47,6 @@ export default function RootLayout() {
     }
   }, [session, loading, fontsLoaded, minLoadingDone]);
 
-  // Affiche le splash screen tant que les 2s ne sont pas écoulées
-  // ou que les fonts/session ne sont pas prêtes
   if (!fontsLoaded || loading || !minLoadingDone) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F8F2F2' }}>
@@ -71,7 +59,7 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={activeTheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(auth)" />
@@ -79,7 +67,15 @@ export default function RootLayout() {
         <Stack.Screen name="product/[id]" />
         <Stack.Screen name="edit-profile" />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style={activeTheme === 'dark' ? 'light' : 'dark'} />
     </ThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AppSettingsProvider>
+      <ThemedApp />
+    </AppSettingsProvider>
   );
 }

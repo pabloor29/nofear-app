@@ -3,6 +3,7 @@ import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from "reac
 import { useRouter } from "expo-router";
 import { supabase } from "@/lib/supabase";
 import { useProfile } from "@/hooks/use-profile";
+import { useThemeStyles } from "@/hooks/use-theme-styles";
 
 export default function EditProfile() {
   const { profile, loading } = useProfile();
@@ -10,6 +11,8 @@ export default function EditProfile() {
   const [lastName, setLastName] = useState("");
   const [saving, setSaving] = useState(false);
   const router = useRouter();
+
+  const { bg, text, textSecondary, border, card } = useThemeStyles();
 
   useEffect(() => {
     if (!profile) return;
@@ -43,24 +46,44 @@ export default function EditProfile() {
     };
 
   return (
-    <View className="flex-1 pt-20 px-6 bg-white">
+    <View 
+      className="flex-1 pt-20 px-6"
+      style={bg}
+    >
       <TouchableOpacity onPress={() => router.back()} className="mb-8">
         <Text className="text-mainColor font-SpaceGroteskBold">← Retour</Text>
       </TouchableOpacity>
 
-      <Text className="text-2xl font-VictorMonoBold mb-8">Mes informations</Text>
+      <Text 
+        className="text-2xl font-VictorMonoBold mb-8"
+        style={text}
+      >
+        Mes informations
+      </Text>
 
-      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">Prénom</Text>
+      <Text 
+        className="font-SpaceGroteskBold text-gray-700 mb-1"
+        style={text}
+      >
+        Prénom
+      </Text>
       <TextInput
         className="border border-gray-300 rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        style={text}
         value={firstName}
         onChangeText={setFirstName}
         placeholder="Prénom"
       />
 
-      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">Nom</Text>
+      <Text 
+        className="font-SpaceGroteskBold text-gray-700 mb-1"
+        style={text}
+      >
+        Nom
+      </Text>
       <TextInput
         className="border border-gray-300 rounded-lg p-3 mb-8 font-SpaceGroteskRegular"
+        style={text}
         value={lastName}
         onChangeText={setLastName}
         placeholder="Nom"
@@ -71,7 +94,7 @@ export default function EditProfile() {
         onPress={handleSave}
         disabled={saving}
       >
-        <Text className="text-white text-center font-SpaceGroteskBold">
+        <Text className="text-white text-center font-VictorMonoBold">
           {saving ? "Sauvegarde..." : "Sauvegarder"}
         </Text>
       </TouchableOpacity>

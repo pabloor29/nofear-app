@@ -1,17 +1,13 @@
-import { useState } from 'react';
-import { Alert, View, TextInput, TouchableOpacity, Text } from 'react-native';
-import { supabase } from '../lib/supabase';
-import SignUp from './SignUp'; // adapte le chemin
+import { useState } from "react";
+import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { supabase } from "../lib/supabase";
+import SignUp from "./SignUp";
 
 export default function Auth() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
-
-  if (showSignUp) {
-    return <SignUp onBack={() => setShowSignUp(false)} />;
-  }
 
   async function signInWithEmail() {
     setLoading(true);
@@ -20,9 +16,15 @@ export default function Auth() {
     setLoading(false);
   }
 
+  if (showSignUp) {
+    return <SignUp onBack={() => setShowSignUp(false)} />;
+  }
+
   return (
-    <View className="p-6 bg-white w-screen h-screen flex-1 justify-center">
-      <Text className="text-3xl font-VictorMonoBold mb-8 text-center">NoFear</Text>
+    <View className="p-6 bg-clearColor w-screen h-screen flex-1 justify-center">
+      <Text className="text-3xl font-VictorMonoBold mb-8 text-center">
+        NoFear
+      </Text>
 
       <Text className="font-SpaceGroteskBold text-gray-700 mb-1">Email</Text>
       <TextInput
@@ -34,7 +36,9 @@ export default function Auth() {
         keyboardType="email-address"
       />
 
-      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">Mot de passe</Text>
+      <Text className="font-SpaceGroteskBold text-gray-700 mb-1">
+        Mot de passe
+      </Text>
       <TextInput
         className="border border-gray-300 rounded-lg p-4 mb-6"
         placeholder="Mot de passe"
