@@ -68,8 +68,8 @@ export default function EditProfile() {
         Prénom
       </Text>
       <TextInput
-        className="border border-gray-300 rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
-        style={text}
+        className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        style={[text , border]}
         value={firstName}
         onChangeText={setFirstName}
         placeholder="Prénom"
@@ -82,8 +82,8 @@ export default function EditProfile() {
         Nom
       </Text>
       <TextInput
-        className="border border-gray-300 rounded-lg p-3 mb-8 font-SpaceGroteskRegular"
-        style={text}
+        className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
+        style={[text , border]}
         value={lastName}
         onChangeText={setLastName}
         placeholder="Nom"

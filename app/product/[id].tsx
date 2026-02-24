@@ -251,7 +251,8 @@ export default function ProductDetail() {
           return (
             <View
               key={index}
-              className="flex-row justify-between items-center border-b border-gray-100 py-3"
+              className="flex-row justify-between items-center border-b py-3"
+              style={[bg, border]}
             >
               <Text className={`font-SpaceGroteskBold ${color}`}>{label}</Text>
               <Text className="text-gray-400 font-SpaceGroteskRegular text-sm">

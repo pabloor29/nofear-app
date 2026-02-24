@@ -1,11 +1,10 @@
 import { AppSettingsProvider, useAppSettings } from '@/context/app-settings';
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
-import { View, Image } from 'react-native';
+import { View, Image, useColorScheme } from 'react-native';
 import { useSession } from '@/hooks/use-session';
 import "./global.css";
 
