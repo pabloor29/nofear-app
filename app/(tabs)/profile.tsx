@@ -7,7 +7,7 @@ import { supabase } from "../../lib/supabase";
 import { useFocusEffect } from "expo-router";
 import { useProfile } from "@/hooks/use-profile";
 
-export default function Settings() {
+export default function Profile() {
   const [session, setSession] = useState<Session | null>(null);
   const { profile, loading, refetch } = useProfile(); // ← unique source
 
@@ -21,6 +21,7 @@ export default function Settings() {
   }, []);
 
   useFocusEffect(
+    
     useCallback(() => {
       refetch();
     }, [])
