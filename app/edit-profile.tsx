@@ -4,6 +4,8 @@ import { useRouter } from "expo-router";
 import { supabase } from "@/lib/supabase";
 import { useProfile } from "@/hooks/use-profile";
 import { useThemeStyles } from "@/hooks/use-theme-styles";
+import { t } from "@/constants/translations";
+import { Language, Theme, useAppSettings } from "@/context/app-settings";
 
 export default function EditProfile() {
   const { profile, loading } = useProfile();
@@ -11,6 +13,7 @@ export default function EditProfile() {
   const [lastName, setLastName] = useState("");
   const [saving, setSaving] = useState(false);
   const router = useRouter();
+  const { language, theme, setLanguage, setTheme } = useAppSettings();
 
   const { bg, text, textSecondary, border, card } = useThemeStyles();
 
@@ -51,21 +54,21 @@ export default function EditProfile() {
       style={bg}
     >
       <TouchableOpacity onPress={() => router.back()} className="mb-8">
-        <Text className="text-mainColor font-SpaceGroteskBold">← Retour</Text>
+        <Text className="text-mainColor font-SpaceGroteskBold">← {t[language].returnButton}</Text>
       </TouchableOpacity>
 
       <Text 
         className="text-2xl font-VictorMonoBold mb-8"
         style={text}
       >
-        Mes informations
+        {t[language].myInformationsLabel}
       </Text>
 
       <Text 
         className="font-SpaceGroteskBold text-gray-700 mb-1"
         style={text}
       >
-        Prénom
+        {t[language].firstName}
       </Text>
       <TextInput
         className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
@@ -79,7 +82,7 @@ export default function EditProfile() {
         className="font-SpaceGroteskBold text-gray-700 mb-1"
         style={text}
       >
-        Nom
+        {t[language].lastName}
       </Text>
       <TextInput
         className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
@@ -95,7 +98,7 @@ export default function EditProfile() {
         disabled={saving}
       >
         <Text className="text-white text-center font-VictorMonoBold">
-          {saving ? "Sauvegarde..." : "Sauvegarder"}
+          {saving ? t[language].saveButtonPending : t[language].saveButton}
         </Text>
       </TouchableOpacity>
     </View>

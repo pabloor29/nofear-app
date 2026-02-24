@@ -1,17 +1,20 @@
 import { supabase } from "@/lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import { Link, router, useLocalSearchParams } from "expo-router";
-import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { useThemeStyles } from "@/hooks/use-theme-styles";
+import { t } from "@/constants/translations";
+import { useAppSettings } from "@/context/app-settings";
 
 export default function ProductCreator({ session }: { session: Session }) {
   const { readDeviceName, readDeviceCategory, readDeviceCode } =
     useLocalSearchParams();
 
   const [creating, setCreating] = useState(false);
+
   const { bg, text, textSecondary, border, card } = useThemeStyles();
+  const { language, theme, setLanguage, setTheme } = useAppSettings();
 
   const [deviceName, setDeviceName] = useState<string>(
     Array.isArray(readDeviceName) ? readDeviceName[0] : readDeviceName || "",
@@ -81,7 +84,7 @@ export default function ProductCreator({ session }: { session: Session }) {
         className="text-2xl font-SpaceGroteskBold mb-12"
         style={text}
       >
-        Connect new No Fear product
+        {t[language].newProductTitle}
       </Text>
       <View className="w-full mb-12">
         <View className="w-full">
@@ -89,7 +92,7 @@ export default function ProductCreator({ session }: { session: Session }) {
             className="font-SpaceGroteskBold mb-1"
             style={text}
           >
-            Device name:
+            {t[language].newProductName}
           </Text>
           <TextInput
             className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
@@ -104,7 +107,7 @@ export default function ProductCreator({ session }: { session: Session }) {
             className="font-SpaceGroteskBold mb-1"
             style={text}
           >
-            Device category:
+            {t[language].newProductCategory}
           </Text>
           <TextInput
             className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
@@ -115,32 +118,6 @@ export default function ProductCreator({ session }: { session: Session }) {
           />
         </View>
         <View className="w-full">
-          {/* <Text 
-            className="font-SpaceGroteskBold mb-1"
-            style={text}
-          >
-            Device security key:
-          </Text>
-          <View className="flex flex-row justify-between">
-            <TextInput
-              className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
-              style={[text , border]}
-              value={deviceCode}
-              onChangeText={(text) => setDeviceCode(text)}
-              secureTextEntry={!passwordVisible}
-              placeholder="MySecurityKey"
-            />
-            <Pressable
-              className="pt-1"
-              onPress={() => setPasswordVisible(!passwordVisible)}
-            >
-              {passwordVisible ? (
-                <Eye size={28} color="#0C1D15" />
-              ) : (
-                <EyeOff size={28} color="#0C1D15" />
-              )}
-            </Pressable>
-          </View> */}
           <View 
             className="border rounded-lg p-3"
             style={border}
@@ -149,7 +126,7 @@ export default function ProductCreator({ session }: { session: Session }) {
               className="font-SpaceGroteskBold mb-1"
               style={text}
             >
-              House&apos;s informations:
+              {t[language].newProductInfos}
             </Text>
             <TextInput
               className="border-b-2 w-full pl-2 py-2 mb-2 text-left font-SpaceGroteskRegular"
@@ -188,13 +165,13 @@ export default function ProductCreator({ session }: { session: Session }) {
           onPress={handleCreate}
         >
           <Text className="text-clearColor text-center font-VictorMonoBold">
-            {creating ? "Création..." : "Créer"}
+            {creating ? t[language].createButton : t[language].createButton}
           </Text>
         </Pressable>
         <Link href={"/(tabs)/add"} asChild>
           <Pressable className="rounded-lg p-4 border border-mainColor">
             <Text className="text-mainColor text-center font-VictorMonoBold">
-              Annuler
+              {t[language].cancelButton}
             </Text>
           </Pressable>
         </Link>

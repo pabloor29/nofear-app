@@ -1,18 +1,21 @@
 import QRcodeScanner from "@/components/QRcodeScanner";
 import { Session } from "@supabase/supabase-js";
 import { useCameraPermissions } from "expo-camera";
-import { Link, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import React, { useState, useEffect } from "react";
 import { Pressable, SafeAreaView, Text, View } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { useThemeStyles } from "@/hooks/use-theme-styles";
+import { t } from "@/constants/translations";
+import { useAppSettings } from "@/context/app-settings";
 
 export default function Add() {
   const [permission, requestPermission] = useCameraPermissions();
   const isPermissionGranted = Boolean(permission?.granted);
   const [session, setSession] = useState<Session | null>(null);
 
-  const { bg, text, textSecondary, border, card } = useThemeStyles();
+  const { bg } = useThemeStyles();
+  const { language, theme, setLanguage, setTheme } = useAppSettings();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -23,26 +26,8 @@ export default function Add() {
       setSession(session);
     });
   }, []);
-
-  if (!session) {
-    return (
-      <View 
-        className="flex-1 justify-center items-center h-screen w-screen px-6"
-        style={bg}
-      >
-        <Text className="text-mainColor text-xl font-PoiretOneRegular text-center">
-          Create your account to add houses to your profile...
-        </Text>
-        <Link href={"/"} asChild>
-          <Pressable className="bg-mainColor py-3 rounded-xl mt-12 w-full">
-            <Text className="text-clearColor text-center font-SpaceGroteskBold">
-              Create my account !
-            </Text>
-          </Pressable>
-        </Link>
-      </View>
-    );
-  } else if (!isPermissionGranted) {
+  
+  if (!isPermissionGranted) {
     // Camera permissions are not granted yet.
     return (
       <View 
@@ -50,25 +35,16 @@ export default function Add() {
         style={bg}
       >
         <Text className="text-primaryGreen font-PoiretOneRegular text-xl text-center">
-          We need your permission to use the camera...
+          {t[language].cameraNotAllowedLabel}
         </Text>
         <Pressable
           className="bg-mainColor py-2 px-4 rounded-lg mt-4"
           onPress={requestPermission}
         >
           <Text className="text-clearColor text-center font-SpaceGroteskBold">
-            Allow NO-FEAR to use my camera
+            {t[language].cameraNotAllowedButton}
           </Text>
         </Pressable>
-        <View className="w-full px-6">
-          <Link href={"/"} asChild>
-            <Pressable className="bg-primaryGreen py-2 rounded-lg  mt-12">
-              <Text className="text-clearColor font-SpaceGroteskBold text-xl text-center">
-                Add my house manually !
-              </Text>
-            </Pressable>
-          </Link>
-        </View>
       </View>
     );
   } else {
@@ -84,15 +60,6 @@ export default function Add() {
 
         <QRcodeScanner />
 
-        {/* <View className="w-full px-6">
-          <Link href={"/"} asChild>
-            <Pressable className="bg-mainColor py-3 rounded-lg  mt-12">
-              <Text className="text-clearColor font-SpaceGroteskBold text-center">
-                Add my house manually !
-              </Text>
-            </Pressable>
-          </Link>
-        </View> */}
       </SafeAreaView>
     );
   }

@@ -6,6 +6,8 @@ import { useProducts } from '@/hooks/use-products';
 import { LockOpen, Lock, HelpCircle } from "lucide-react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useThemeStyles } from "@/hooks/use-theme-styles";
+import { t } from "@/constants/translations";
+import { useAppSettings } from "@/context/app-settings";
 
 type StateEntry = {
   code: number;
@@ -17,7 +19,8 @@ export default function Index() {
   const { products, loading, refetch } = useProducts();
   const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
-  const { bg, text, textSecondary, border, card } = useThemeStyles();
+  const { bg, text } = useThemeStyles();
+  const { language, theme, setLanguage, setTheme } = useAppSettings();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -61,7 +64,7 @@ export default function Index() {
         className="text-2xl font-VictorMonoBold mb-6"
         style={text}
       >
-        Mes produits
+        {t[language].myProducts}
       </Text>
 
       {loading && !refreshing ? (
@@ -79,7 +82,7 @@ export default function Index() {
                 className="text-gray-400 font-SpaceGroteskRegular"
                 style={text}
               >
-                Aucun produit détecté...
+                {t[language].noProduct}
               </Text>
             </View>
           }
