@@ -10,6 +10,8 @@ import {
   View,
 } from "react-native";
 import { useThemeStyles } from "@/hooks/use-theme-styles";
+import { t } from "@/constants/translations";
+import { useAppSettings } from "@/context/app-settings";
 
 type StateEntry = {
   code: number;
@@ -51,7 +53,8 @@ export default function ProductDetail() {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
 
-  const { bg, text, textSecondary, border, card } = useThemeStyles();
+  const { bg, text, border } = useThemeStyles();
+  const { language, theme, setLanguage, setTheme } = useAppSettings();
 
   useEffect(() => {
     supabase
@@ -96,7 +99,7 @@ export default function ProductDetail() {
   };
 
   if (loading) return <ActivityIndicator className="flex-1 mt-20" />;
-  if (!product) return <Text className="p-6">Produit introuvable.</Text>;
+  if (!product) return <Text className="p-6">{t[language].productNotFound}</Text>;
 
   const history = product.state?.history ?? [];
 
@@ -110,14 +113,14 @@ export default function ProductDetail() {
       style={bg}
     >
       <Pressable onPress={() => router.back()} className="mb-6">
-        <Text className="text-mainColor font-SpaceGroteskBold">← Retour</Text>
+        <Text className="text-mainColor font-SpaceGroteskBold">← {t[language].returnButton}</Text>
       </Pressable>
 
       <Text 
         className="text-2xl font-VictorMonoBold mb-8"
         style={text}
       >
-        Détail du produit
+        {t[language].tileEditProduct}
       </Text>
 
       {/* Date de création */}
@@ -125,7 +128,7 @@ export default function ProductDetail() {
         className="font-SpaceGroteskBold mb-1"
         style={text}
       >
-        Date de création
+        {t[language].creationDate}
       </Text>
       <View className="border border-gray-100 bg-gray-50 rounded-lg p-3 mb-6">
         <Text className="text-gray-500 font-SpaceGroteskRegular">
@@ -138,7 +141,7 @@ export default function ProductDetail() {
         className="font-SpaceGroteskBold text-gray-700 mb-1"
         style={text}
       >
-        Nom
+        {t[language].productName}
       </Text>
       <TextInput
         className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
@@ -151,7 +154,7 @@ export default function ProductDetail() {
         className="font-SpaceGroteskBold text-gray-700 mb-1"
         style={text}
       >
-        Adresse
+        {t[language].productAddress}
       </Text>
       <TextInput
         className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
@@ -164,7 +167,7 @@ export default function ProductDetail() {
         className="font-SpaceGroteskBold mb-1"
         style={text}
       >
-        Code postal
+        {t[language].productZipCode}
       </Text>
       <TextInput
         className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
@@ -177,7 +180,7 @@ export default function ProductDetail() {
         className="font-SpaceGroteskBold mb-1"
         style={text}
       >
-        Ville
+        {t[language].productCity}
       </Text>
       <TextInput
         className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
@@ -190,7 +193,7 @@ export default function ProductDetail() {
         className="font-SpaceGroteskBold mb-1"
         style={text}
       >
-        Pays
+        {t[language].productCountry}
       </Text>
       <TextInput
         className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
@@ -204,7 +207,7 @@ export default function ProductDetail() {
         className="font-SpaceGroteskBold mb-1"
         style={text}
       >
-        Catégorie
+        {t[language].productCategory}
       </Text>
       <View className="border border-gray-100 bg-gray-50 rounded-lg p-3 mb-4">
         <Text className="text-gray-400 font-SpaceGroteskRegular">
@@ -216,7 +219,7 @@ export default function ProductDetail() {
         className="font-SpaceGroteskBold mb-1"
         style={text}
       >
-        Clé de sécurité
+        {t[language].productSecurityKey}
       </Text>
       <View className="border border-gray-100 bg-gray-50 rounded-lg p-3 mb-8">
         <Text className="text-gray-400 font-SpaceGroteskRegular">••••••••</Text>
@@ -229,7 +232,7 @@ export default function ProductDetail() {
         disabled={saving}
       >
         <Text className="text-clearColor text-center font-VictorMonoBold">
-          {saving ? "Sauvegarde..." : "Sauvegarder"}
+          {saving ? t[language].saveButtonPending : t[language].saveButton}
         </Text>
       </Pressable>
 
@@ -238,12 +241,12 @@ export default function ProductDetail() {
         className="text-xl font-VictorMonoBold mb-4"
         style={text}
       >
-        Historique
+        {t[language].productHistoric}
       </Text>
 
       {stateHistory.length === 0 ? (
         <Text className="text-gray-400 font-SpaceGroteskRegular mb-10">
-          Aucun historique.
+          {t[language].productNoHistoric}
         </Text>
       ) : (
         [...stateHistory].reverse().map((entry, index) => {

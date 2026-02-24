@@ -3,7 +3,9 @@ import React from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeStyles } from "@/hooks/use-theme-styles";
-import { Home, PlusCircle, Settings } from "lucide-react-native";
+import { Home, PlusCircle, CircleUser } from "lucide-react-native";
+import { t } from "@/constants/translations";
+import { useAppSettings } from "@/context/app-settings";
 
 export default function TabLayout() {
   const { isDark } = useThemeStyles();
@@ -12,6 +14,8 @@ export default function TabLayout() {
   const tint = isDark ? "#F8F2F2" : "#1B110E";
   const background = isDark ? "#1B110E" : "#F8F2F2";
   const border = isDark ? "#374151" : "#e5e7eb";
+
+  const { language, theme, setLanguage, setTheme } = useAppSettings();
 
   return (
     <Tabs
@@ -47,7 +51,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: t[language].homeLabel,
           tabBarIcon: ({ color }) => (
             <View pointerEvents="none">
               <Home size={26} color={color} />
@@ -59,7 +63,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="add"
         options={{
-          title: "Add",
+          title: t[language].addLabel,
           tabBarIcon: ({ color }) => (
             <View pointerEvents="none">
               <PlusCircle size={26} color={color} />
@@ -69,12 +73,12 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="settings"
+        name="profile"
         options={{
-          title: "Settings",
+          title: t[language].profileLabel,
           tabBarIcon: ({ color }) => (
             <View pointerEvents="none">
-              <Settings size={26} color={color} />
+              <CircleUser size={26} color={color} />
             </View>
           ),
         }}

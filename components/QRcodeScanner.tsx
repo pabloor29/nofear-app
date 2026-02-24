@@ -2,24 +2,30 @@ import { CameraType, CameraView } from "expo-camera";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Alert, View } from "react-native";
+import { t } from "@/constants/translations";
+import { useAppSettings } from "@/context/app-settings";
 
 const QRcodeScanner = () => {
   const [facing] = useState<CameraType>("back");
   const [scanned, setScanned] = useState(false);
   const [cameraActive, setCameraActive] = useState(true);
   const router = useRouter();
+  const { language, theme, setLanguage, setTheme } = useAppSettings();
 
   const handleBarCodeScanned = ({ data }: any) => {
     if (scanned) return;
 
     setScanned(true);
-    setCameraActive(false); // 🔥 on démonte la caméra immédiatement
+    setCameraActive(false);
 
     let parsed;
     try {
       parsed = JSON.parse(data);
     } catch (error) {
-      Alert.alert("QR Code invalide", "Le contenu n’est pas lisible.", [
+      Alert.alert(
+        t[language].alertInvalideQRcode, 
+        t[language].alertErrorReading, 
+        [
         {
           text: "OK",
           onPress: () => {
@@ -42,8 +48,8 @@ const QRcodeScanner = () => {
       });
     } else {
       Alert.alert(
-        "QR Code invalide",
-        "Ce QR code ne correspond pas à un appareil reconnu.",
+        t[language].alertInvalideQRcode,
+        t[language].alertDeviceNotReconized,
         [
           {
             text: "OK",

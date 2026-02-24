@@ -1,10 +1,16 @@
 export const t = {
   fr: {
+    // Tab
+    homeLabel:"Accueil",
+    addLabel:"Ajouter",
+    profileLabel:"Profil",
+
     // Home
     myProducts: "Mes produits",
     noProduct: "Aucun produit détecté...",
 
     // Edit and Add product
+    productNotFound: "Produit introuvable...",
     tileEditProduct: "Détails du produit",
     creationDate: "Date de création",
     productName: "Nom",
@@ -15,9 +21,19 @@ export const t = {
     productCategory: "Catégorie",
     productSecurityKey: "Clé de sécurité",
     productHistoric: "Historique",
+    productNoHistoric: "Pas d'historique disponible",
+    newProductTitle: "Connecter un nouveau produit NO FEAR",
+    newProductName: "Nom du produit",
+    newProductCategory: "Catégorie du produit",
+    newProductInfos: "Informations",
 
     // Add page
     QRcodeScanner: "QR code scanner",
+    cameraNotAllowedLabel: "Nous avons besoin de votre authorisation pour utiliser la caméra...",
+    cameraNotAllowedButton: "Authoriser NO FEAR à utiliser la caméra",
+    alertInvalideQRcode: "QR code invalide",
+    alertErrorReading: "Le contenu n’est pas lisible.",
+    alertDeviceNotReconized: "Ce QR code ne correspond pas à un appareil reconnu.",
 
     // Profile
     welcome: "Bienvenue",
@@ -40,6 +56,7 @@ export const t = {
     returnButton: "Retour",
     editProfileBUtton: "Modifier mon profil",
     signOutButton: "Se déconnecter",
+    cancelButton: "Annuler",
 
     // Navigation bar
     navHomeLabel: "Accueil",
@@ -47,11 +64,17 @@ export const t = {
     navProfileLabel: "Profil",
   },
   en: {
+    // Tab
+    homeLabel:"Home",
+    addLabel:"Add",
+    profileLabel:"Profile",
+
     // Home
     myProducts: "My products",
     noProduct: "No product detected...",
 
     // Edit and Add product
+    productNotFound: "Product not found...",
     tileEditProduct: "Product details",
     creationDate: "Creation date",
     productName: "Name",
@@ -62,9 +85,19 @@ export const t = {
     productCategory: "Category",
     productSecurityKey: "Security key",
     productHistoric: "History",
+    productNoHistoric: "No historic available",
+    newProductTitle: "Connect new NO FEAR product",
+    newProductName: "Device name",
+    newProductCategory: "Device category",
+    newProductInfos: "Informations",
 
     // Add page
     QRcodeScanner: "QR code scanner",
+    cameraNotAllowedLabel: "We need your permission to use the camera...",
+    cameraNotAllowedButton: "Allow NO FEAR to use my camera",
+    alertInvalideQRcode: "Invalid QR code",
+    alertErrorReading: "The content is not readable.",
+    alertDeviceNotReconized: "This QR code does not match a recognized device.",
 
     // Profile
     welcome: "Welcome",
@@ -87,6 +120,7 @@ export const t = {
     returnButton: "Back",
     editProfileBUtton: "Edit my profile",
     signOutButton: "Sign out",
+    cancelButton: "Cancel",
 
     // Navigation bar
     navHomeLabel: "Home",

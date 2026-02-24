@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { supabase } from "../lib/supabase";
+import { t } from "@/constants/translations";
 
 type Profile = { first_name: string; last_name: string } | null;
 type Props = { session: Session; profile: Profile; loading: boolean };
@@ -14,17 +15,18 @@ const languages = [
   { value: "en", label: "🇬🇧 English" },
 ];
 
-const themes = [
-  { value: "light", label: "☀️ Clair" },
-  { value: "dark", label: "🌙 Sombre" },
-  { value: "system", label: "📱 Système" },
-];
-
 export default function Account({ session, profile, loading }: Props) {
   const [loadingSession, setLoadingSession] = useState(false);
   const { language, theme, setLanguage, setTheme } = useAppSettings();
   const router = useRouter();
-  const { bg, text, textSecondary, border, card } = useThemeStyles();
+  const { bg, text } = useThemeStyles();
+
+  const tr = t[language];
+  const themes = [
+    { value: "light", label: tr.lightThemeLabel },
+    { value: "dark", label: tr.darkThemeLabel },
+    { value: "system", label: tr.systemThemeLabel },
+  ];
 
   async function signOut() {
     setLoadingSession(true);
@@ -45,7 +47,7 @@ export default function Account({ session, profile, loading }: Props) {
             className="text-2xl font-SpaceGroteskBold pr-2"
             style={text}
           >
-            Bienvenue,
+            {t[language].welcome},
           </Text>
           <Text 
             className="text-2xl font-SpaceGroteskBold"
@@ -67,7 +69,7 @@ export default function Account({ session, profile, loading }: Props) {
         className="font-SpaceGroteskBold text-gray-700 mb-2"
         style={text}
       >
-        Langue
+        {t[language].language}
       </Text>
       <View className="flex-row gap-3 mb-6">
         {languages.map((l) => (
@@ -91,7 +93,7 @@ export default function Account({ session, profile, loading }: Props) {
         className="font-SpaceGroteskBold text-gray-700 mb-2"
         style={text}
       >
-        Thème
+        {t[language].theme}
       </Text>
       <View className="flex-row gap-2 mb-8">
         {themes.map((t) => (
@@ -117,7 +119,7 @@ export default function Account({ session, profile, loading }: Props) {
           onPress={() => router.push("/edit-profile")}
         >
           <Text className="text-mainColor text-center font-VictorMonoBold">
-            Modifier mes données
+            {t[language].editProfileBUtton}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -126,7 +128,7 @@ export default function Account({ session, profile, loading }: Props) {
           disabled={loadingSession}
         >
           <Text className="text-clearColor text-center font-VictorMonoBold">
-            Se déconnecter
+            {t[language].signOutButton}
           </Text>
         </TouchableOpacity>
       </View>
