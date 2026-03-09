@@ -14,6 +14,16 @@ type StateEntry = {
   date: string;
 };
 
+const StateIcon = ({ state }: { state: { history: StateEntry[] } | null }) => {
+  if (!state?.history?.length) return <HelpCircle size={24} color="gray" />;
+  
+  const lastCode = state.history[state.history.length - 1].code;
+
+  if (lastCode === 1) return <Lock size={24} color="green" />;
+  if (lastCode === 0) return <LockOpen size={24} color="red" />;
+  return <HelpCircle size={24} color="gray" />;
+};
+
 export default function Index() {
   const [session, setSession] = useState<Session | null>(null);
   const { products, loading, refetch } = useProducts();
@@ -46,15 +56,6 @@ export default function Index() {
 
   if (!session) return null;
 
-  const StateIcon = ({ state }: { state: { history: StateEntry[] } | null }) => {
-    if (!state?.history?.length) return <HelpCircle size={24} color="gray" />;
-    
-    const lastCode = state.history[state.history.length - 1].code;
-
-    if (lastCode === 1) return <Lock size={24} color="green" />;
-    if (lastCode === 0) return <LockOpen size={24} color="red" />;
-    return <HelpCircle size={24} color="gray" />;
-  };
   return (
     <View 
       className="flex-1 pt-20 p-6 bg-white"
@@ -91,6 +92,7 @@ export default function Index() {
         <FlatList
           data={products}
           keyExtractor={(item) => item.id}
+          extraData={products}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
