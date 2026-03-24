@@ -50,9 +50,11 @@
       "reactCompiler": true
     },
     "extra": {
+      "router": {},
       "eas": {
-        "projectId": "09130631-41f1-44d2-85a4-537f53c9a2f3"
+        "projectId": "bfc7fdba-d56b-4a43-970f-f135b1704cd9"
       }
-    }
+    },
+    "owner": "pablo-ortega-29"
   }
 }
