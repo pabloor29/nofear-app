@@ -1,27 +1,32 @@
-import { useEffect, useState } from 'react';
-import { Session } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { Session } from "@supabase/supabase-js";
 
 export function useSession() {
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    setSession(session);
-    setLoading(false);
-  });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
 
-  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-    // Si le token est invalide, on déconnecte proprement
-    if (event === 'TOKEN_REFRESHED' && !session) {
-      supabase.auth.signOut();
-    }
-    setSession(session);
-  });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "TOKEN_REFRESHED") {
+        setSession(session);
+      }
 
-  return () => subscription.unsubscribe();
-}, []);
+      if (event === "SIGNED_OUT" || (event === "TOKEN_REFRESHED" && !session)) {
+        setSession(null);
+      }
 
-  return { session, loading };
+      // Gère le refresh token invalide
+      if (event === "SIGNED_IN") {
+        setSession(session);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return { session };
 }
