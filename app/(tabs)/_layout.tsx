@@ -6,6 +6,7 @@ import { useThemeStyles } from "@/hooks/use-theme-styles";
 import { Home, PlusCircle, CircleUser } from "lucide-react-native";
 import { t } from "@/constants/translations";
 import { useAppSettings } from "@/context/app-settings";
+import { usePushNotifications } from "@/hooks/use-push-notifications";
 
 export default function TabLayout() {
   const { isDark } = useThemeStyles();
@@ -16,6 +17,8 @@ export default function TabLayout() {
   const border = isDark ? "#374151" : "#e5e7eb";
 
   const { language, theme, setLanguage, setTheme } = useAppSettings();
+
+  usePushNotifications();
 
   return (
     <Tabs
