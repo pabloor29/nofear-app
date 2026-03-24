@@ -3,6 +3,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Modal,
   Pressable,
   ScrollView,
   Text,
@@ -28,11 +29,23 @@ type Product = {
   city: string;
   country: string;
   state: { history: StateEntry[] } | null;
+  notification_delay: number;
 };
 
+const DELAY_OPTIONS = [
+  { label: "10 secondes", value: 10 },
+  { label: "30 secondes", value: 30 },
+  { label: "1 minute", value: 60 },
+  { label: "2 minutes", value: 120 },
+  { label: "5 minutes", value: 300 },
+  { label: "10 minutes", value: 600 },
+  { label: "15 minutes", value: 900 },
+  { label: "30 minutes", value: 1800 },
+];
+
 const stateLabel = (code: number) => {
-  if (code === 1) return { label: "Fermé", color: "text-green-500" };
-  if (code === 0) return { label: "Ouvert", color: "text-red-500" };
+  if (code === 0) return { label: "Fermé", color: "text-green-500" };
+  if (code === 1) return { label: "Ouvert", color: "text-red-500" };
   return { label: "Inconnu", color: "text-gray-400" };
 };
 
@@ -46,15 +59,17 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [delayPickerOpen, setDelayPickerOpen] = useState(false);
 
   const [name, setName] = useState("");
   const [street, setStreet] = useState("");
   const [zipcode, setZipcode] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
+  const [notificationDelay, setNotificationDelay] = useState(300);
 
   const { bg, text, border } = useThemeStyles();
-  const { language, theme, setLanguage, setTheme } = useAppSettings();
+  const { language } = useAppSettings();
 
   useEffect(() => {
     supabase
@@ -70,6 +85,7 @@ export default function ProductDetail() {
           setZipcode(data.zipcode || "");
           setCity(data.city || "");
           setCountry(data.country || "");
+          setNotificationDelay(data.notification_delay ?? 300);
         }
         setLoading(false);
       });
@@ -85,6 +101,7 @@ export default function ProductDetail() {
         zipcode,
         city,
         country,
+        notification_delay: notificationDelay,
         last_update: new Date().toISOString(),
       })
       .eq("id", id);
@@ -102,32 +119,21 @@ export default function ProductDetail() {
   if (!product) return <Text className="p-6">{t[language].productNotFound}</Text>;
 
   const history = product.state?.history ?? [];
-
-  // Séparer l'entrée de création (code 99) des autres entrées
   const creationEntry = history.find((e) => e.code === 99);
   const stateHistory = history.filter((e) => e.code !== 99);
 
   return (
-    <ScrollView 
-      className="flex-1 pt-20 px-6"
-      style={bg}
-    >
+    <ScrollView className="flex-1 pt-20 px-6" style={bg}>
       <Pressable onPress={() => router.back()} className="mb-6">
         <Text className="text-mainColor font-SpaceGroteskBold">← {t[language].returnButton}</Text>
       </Pressable>
 
-      <Text 
-        className="text-2xl font-VictorMonoBold mb-8"
-        style={text}
-      >
+      <Text className="text-2xl font-VictorMonoBold mb-8" style={text}>
         {t[language].tileEditProduct}
       </Text>
 
       {/* Date de création */}
-      <Text 
-        className="font-SpaceGroteskBold mb-1"
-        style={text}
-      >
+      <Text className="font-SpaceGroteskBold mb-1" style={text}>
         {t[language].creationDate}
       </Text>
       <View className="border border-gray-100 bg-gray-50 rounded-lg p-3 mb-6">
@@ -137,88 +143,107 @@ export default function ProductDetail() {
       </View>
 
       {/* Champs modifiables */}
-      <Text 
-        className="font-SpaceGroteskBold text-gray-700 mb-1"
-        style={text}
-      >
+      <Text className="font-SpaceGroteskBold mb-1" style={text}>
         {t[language].productName}
       </Text>
       <TextInput
         className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
-        style={[text , border]}
+        style={[text, border]}
         value={name}
         onChangeText={setName}
       />
 
-      <Text 
-        className="font-SpaceGroteskBold text-gray-700 mb-1"
-        style={text}
-      >
+      <Text className="font-SpaceGroteskBold mb-1" style={text}>
         {t[language].productAddress}
       </Text>
       <TextInput
         className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
-        style={[text , border]}
+        style={[text, border]}
         value={street}
         onChangeText={setStreet}
       />
 
-      <Text 
-        className="font-SpaceGroteskBold mb-1"
-        style={text}
-      >
+      <Text className="font-SpaceGroteskBold mb-1" style={text}>
         {t[language].productZipCode}
       </Text>
       <TextInput
         className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
-        style={[text , border]}
+        style={[text, border]}
         value={zipcode}
         onChangeText={setZipcode}
       />
 
-      <Text 
-        className="font-SpaceGroteskBold mb-1"
-        style={text}
-      >
+      <Text className="font-SpaceGroteskBold mb-1" style={text}>
         {t[language].productCity}
       </Text>
       <TextInput
         className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
-        style={[text , border]}
+        style={[text, border]}
         value={city}
         onChangeText={setCity}
       />
 
-      <Text 
-        className="font-SpaceGroteskBold mb-1"
-        style={text}
-      >
+      <Text className="font-SpaceGroteskBold mb-1" style={text}>
         {t[language].productCountry}
       </Text>
       <TextInput
-        className="border rounded-lg p-3 mb-4 font-SpaceGroteskRegular"
-        style={[text , border]}
+        className="border rounded-lg p-3 mb-6 font-SpaceGroteskRegular"
+        style={[text, border]}
         value={country}
         onChangeText={setCountry}
       />
 
-      {/* Champs non modifiables */}
-      <Text 
-        className="font-SpaceGroteskBold mb-1"
-        style={text}
+      {/* Délai de notification */}
+      <Text className="font-SpaceGroteskBold mb-1" style={text}>
+        Délai de notification
+      </Text>
+      <Pressable
+        className="border rounded-lg p-3 mb-6 flex-row justify-between items-center"
+        style={border}
+        onPress={() => setDelayPickerOpen(true)}
       >
+        <Text className="font-SpaceGroteskRegular" style={text}>
+          {DELAY_OPTIONS.find((o) => o.value === notificationDelay)?.label ?? "5 minutes"}
+        </Text>
+        <Text className="text-gray-400">▼</Text>
+      </Pressable>
+
+      <Modal visible={delayPickerOpen} transparent animationType="fade">
+        <Pressable
+          className="flex-1 bg-black/40 justify-center px-6"
+          onPress={() => setDelayPickerOpen(false)}
+        >
+          <View className="rounded-xl overflow-hidden" style={bg}>
+            {DELAY_OPTIONS.map((option) => (
+              <Pressable
+                key={option.value}
+                className="p-4 border-b border-gray-100 flex-row justify-between items-center"
+                onPress={() => {
+                  setNotificationDelay(option.value);
+                  setDelayPickerOpen(false);
+                }}
+              >
+                <Text className="font-SpaceGroteskRegular" style={text}>
+                  {option.label}
+                </Text>
+                {notificationDelay === option.value && (
+                  <Text className="text-mainColor font-SpaceGroteskBold">✓</Text>
+                )}
+              </Pressable>
+            ))}
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* Champs non modifiables */}
+      <Text className="font-SpaceGroteskBold mb-1" style={text}>
         {t[language].productCategory}
       </Text>
       <View className="border border-gray-100 bg-gray-50 rounded-lg p-3 mb-4">
-        <Text className="text-gray-400 font-SpaceGroteskRegular">
-          {product.category}
-        </Text>
+        <Text className="text-gray-400 font-SpaceGroteskRegular">{product.category}</Text>
       </View>
 
-      <Text 
-        className="font-SpaceGroteskBold mb-1"
-        style={text}
-      >
+      <Text className="font-SpaceGroteskBold mb-1" style={text}>
         {t[language].productSecurityKey}
       </Text>
       <View className="border border-gray-100 bg-gray-50 rounded-lg p-3 mb-8">
@@ -236,11 +261,8 @@ export default function ProductDetail() {
         </Text>
       </Pressable>
 
-      {/* Historique (uniquement code 0 et 1) */}
-      <Text 
-        className="text-xl font-VictorMonoBold mb-4"
-        style={text}
-      >
+      {/* Historique */}
+      <Text className="text-xl font-VictorMonoBold mb-4" style={text}>
         {t[language].productHistoric}
       </Text>
 

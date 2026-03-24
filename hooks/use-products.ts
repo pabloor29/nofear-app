@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSession } from "./use-session";
 
 type StateEntry = {
@@ -17,7 +17,7 @@ type Product = {
   zipcode: string;
   city: string;
   country: string;
-  state: { history: StateEntry[] } | null; 
+  state: { history: StateEntry[] } | null;
   last_update: string;
   created_date: string;
 };
@@ -27,26 +27,25 @@ export function useProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     if (!session) return;
     setLoading(true);
 
     const { data, error } = await supabase
       .from("products")
-      .select("*")
+      .select("id, user_id, name, category, security_key, street, zipcode, city, country, state, last_update, created_date")
       .eq("user_id", session.user.id)
       .order("created_date", { ascending: false });
 
-    if (!error && data) setProducts(data);
+    if (!error && data) setProducts([...data]);
     setLoading(false);
-  };
+  }, [session]);
 
   useEffect(() => {
     if (!session) return;
 
     fetchProducts();
 
-    // Écoute les changements en temps réel sur la table products
     const subscription = supabase
       .channel('products-changes')
       .on(
@@ -58,7 +57,7 @@ export function useProducts() {
           filter: `user_id=eq.${session.user.id}`,
         },
         () => {
-          fetchProducts(); // recharge quand un produit est modifié
+          fetchProducts();
         }
       )
       .subscribe();
@@ -66,7 +65,7 @@ export function useProducts() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [session]);
+  }, [session, fetchProducts]);
 
   return { products, loading, refetch: fetchProducts };
 }
