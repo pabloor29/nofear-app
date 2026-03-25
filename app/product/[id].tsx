@@ -44,8 +44,8 @@ const DELAY_OPTIONS = [
 ];
 
 const stateLabel = (code: number) => {
-  if (code === 1) return { label: "Fermé", color: "text-green-500" };
-  if (code === 0) return { label: "Ouvert", color: "text-red-500" };
+  if (code === 0) return { label: "Fermé", color: "text-green-500" };
+  if (code === 1) return { label: "Ouvert", color: "text-red-500" };
   return { label: "Inconnu", color: "text-gray-400" };
 };
 
@@ -60,6 +60,7 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [delayPickerOpen, setDelayPickerOpen] = useState(false);
+  const [showAllHistory, setShowAllHistory] = useState(false);
 
   const [name, setName] = useState("");
   const [street, setStreet] = useState("");
@@ -270,23 +271,36 @@ export default function ProductDetail() {
         <Text className="text-gray-400 font-SpaceGroteskRegular mb-10">
           {t[language].productNoHistoric}
         </Text>
-      ) : (
-        [...stateHistory].reverse().map((entry, index) => {
-          const { label, color } = stateLabel(entry.code);
-          return (
-            <View
-              key={index}
-              className="flex-row justify-between items-center border-b py-3"
-              style={[bg, border]}
-            >
-              <Text className={`font-SpaceGroteskBold ${color}`}>{label}</Text>
-              <Text className="text-gray-400 font-SpaceGroteskRegular text-sm">
-                {formatDate(entry.date)}
-              </Text>
-            </View>
-          );
-        })
-      )}
+      ) : (() => {
+        const reversed = [...stateHistory].reverse();
+        const displayed = showAllHistory ? reversed : reversed.slice(0, 5);
+        return (
+          <>
+            {displayed.map((entry, index) => {
+              const { label, color } = stateLabel(entry.code);
+              return (
+                <View
+                  key={index}
+                  className="flex-row justify-between items-center border-b py-3"
+                  style={[bg, border]}
+                >
+                  <Text className={`font-SpaceGroteskBold ${color}`}>{label}</Text>
+                  <Text className="text-gray-400 font-SpaceGroteskRegular text-sm">
+                    {formatDate(entry.date)}
+                  </Text>
+                </View>
+              );
+            })}
+            {reversed.length > 5 && (
+              <Pressable className="py-4" onPress={() => setShowAllHistory((v) => !v)}>
+                <Text className="text-mainColor font-SpaceGroteskBold text-center">
+                  {showAllHistory ? "Voir moins" : "Voir plus"}
+                </Text>
+              </Pressable>
+            )}
+          </>
+        );
+      })()}
 
       <View className="mb-20" />
     </ScrollView>

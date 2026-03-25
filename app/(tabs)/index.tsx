@@ -19,8 +19,8 @@ const StateIcon = ({ state }: { state: { history: StateEntry[] } | null }) => {
   
   const lastCode = state.history[state.history.length - 1].code;
 
-  if (lastCode === 1) return <Lock size={24} color="green" />;
-  if (lastCode === 0) return <LockOpen size={24} color="red" />;
+  if (lastCode === 0) return <Lock size={24} color="green" />;
+  if (lastCode === 1) return <LockOpen size={24} color="red" />;
   return <HelpCircle size={24} color="gray" />;
 };
 
