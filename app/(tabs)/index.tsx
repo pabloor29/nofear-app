@@ -1,9 +1,9 @@
 import { Session } from "@supabase/supabase-js";
-import { useEffect, useState, useCallback } from "react";
-import { ActivityIndicator, FlatList, Text, View, RefreshControl, Pressable } from "react-native";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { ActivityIndicator, FlatList, Text, View, RefreshControl, Pressable, Animated, TouchableOpacity } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { useProducts } from '@/hooks/use-products';
-import { LockOpen, Lock, HelpCircle } from "lucide-react-native";
+import { LockOpen, Lock, HelpCircle, RotateCcw } from "lucide-react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useThemeStyles } from "@/hooks/use-theme-styles";
 import { t } from "@/constants/translations";
@@ -28,15 +28,26 @@ export default function Index() {
   const [session, setSession] = useState<Session | null>(null);
   const { products, loading, refetch } = useProducts();
   const [refreshing, setRefreshing] = useState(false);
+  const rotation = useRef(new Animated.Value(0)).current;
   const router = useRouter();
   const { bg, text } = useThemeStyles();
   const { language, theme, setLanguage, setTheme } = useAppSettings();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
+    rotation.setValue(0);
+    Animated.loop(
+      Animated.timing(rotation, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      })
+    ).start();
     await refetch();
     setRefreshing(false);
-  }, []);
+    rotation.stopAnimation();
+    rotation.setValue(0);
+  }, [refetch, rotation]);
 
   useFocusEffect(
     useCallback(() => {
@@ -61,12 +72,25 @@ export default function Index() {
       className="flex-1 pt-20 p-6 bg-white"
       style={bg}
     >
-      <Text 
-        className="text-2xl font-VictorMonoBold mb-6"
-        style={text}
-      >
-        {t[language].myProducts}
-      </Text>
+      <View className="flex-row justify-between items-center mb-6">
+        <Text className="text-2xl font-VictorMonoBold" style={text}>
+          {t[language].myProducts}
+        </Text>
+        <TouchableOpacity
+          onPress={onRefresh}
+          disabled={refreshing}
+          hitSlop={{ top: 16, bottom: 16, left: 16, right: 16 }}
+          style={{ padding: 4 }}
+        >
+          <Animated.View pointerEvents="none" style={{
+            transform: [{
+              rotate: rotation.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "-360deg"] })
+            }]
+          }}>
+            <RotateCcw size={22} color={text.color as string} />
+          </Animated.View>
+        </TouchableOpacity>
+      </View>
 
       {loading && !refreshing ? (
         <ActivityIndicator />
