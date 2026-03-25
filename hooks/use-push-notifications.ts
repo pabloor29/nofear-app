@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import * as Notifications from "expo-notifications";
-import { Platform } from "react-native";
+import { AppState, AppStateStatus, Platform } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { useSession } from "./use-session";
 import Constants from "expo-constants";
@@ -17,9 +17,12 @@ Notifications.setNotificationHandler({
 
 export function usePushNotifications() {
   const { session } = useSession();
+  const appState = useRef(AppState.currentState);
 
   useEffect(() => {
     if (!session) return;
+
+    const userId = session.user.id;
 
     const register = async () => {
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -46,13 +49,27 @@ export function usePushNotifications() {
 
       const { error } = await supabase
         .from("profiles")
-        .upsert({ id: session.user.id, push_token: token });
+        .update({ push_token: token })
+        .eq("id", userId);
 
-      console.log("Upsert error:", error);
-      console.log("Upsert réussi pour user:", session.user.id);
+      if (error) {
+        console.error("Erreur lors de la mise à jour du push token:", error);
+      } else {
+        console.log("Push token mis à jour pour user:", userId);
+      }
     };
 
     register();
+
+    const subscription = AppState.addEventListener(
+      "change",
+      (nextState: AppStateStatus) => {
+        if (appState.current.match(/inactive|background/) && nextState === "active") {
+          register();
+        }
+        appState.current = nextState;
+      }
+    );
 
     if (Platform.OS === "android") {
       Notifications.setNotificationChannelAsync("default", {
@@ -60,5 +77,9 @@ export function usePushNotifications() {
         importance: Notifications.AndroidImportance.MAX,
       });
     }
+
+    return () => {
+      subscription.remove();
+    };
   }, [session]);
 }
