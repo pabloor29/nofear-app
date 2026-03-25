@@ -44,8 +44,8 @@ const DELAY_OPTIONS = [
 ];
 
 const stateLabel = (code: number) => {
-  if (code === 0) return { label: "Fermé", color: "text-green-500" };
-  if (code === 1) return { label: "Ouvert", color: "text-red-500" };
+  if (code === 1) return { label: "Fermé", color: "text-green-500" };
+  if (code === 0) return { label: "Ouvert", color: "text-red-500" };
   return { label: "Inconnu", color: "text-gray-400" };
 };
 

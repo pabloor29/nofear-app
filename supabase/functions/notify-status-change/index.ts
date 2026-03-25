@@ -89,9 +89,9 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
       // Message selon l'état
       const title = "Changement d'état";
-      const body = freshLast.code === 0
+      const body = freshLast.code === 1
         ? "La porte est fermée 🔒"
-        : freshLast.code === 1
+        : freshLast.code === 0
         ? "La porte est ouverte 🔓"
         : null;
 
