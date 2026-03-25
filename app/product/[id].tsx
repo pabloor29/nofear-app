@@ -59,6 +59,8 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [delayPickerOpen, setDelayPickerOpen] = useState(false);
   const [showAllHistory, setShowAllHistory] = useState(false);
 
@@ -114,6 +116,17 @@ export default function ProductDetail() {
       router.back();
     }
     setSaving(false);
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    const { error } = await supabase.from("products").delete().eq("id", id);
+    if (error) {
+      alert("Erreur : " + error.message);
+      setDeleting(false);
+    } else {
+      router.back();
+    }
   };
 
   if (loading) return <ActivityIndicator className="flex-1 mt-20" />;
@@ -253,7 +266,7 @@ export default function ProductDetail() {
 
       {/* Bouton sauvegarder */}
       <Pressable
-        className="bg-mainColor py-3 rounded-lg mb-10"
+        className="bg-mainColor py-3 rounded-lg mb-4"
         onPress={handleSave}
         disabled={saving}
       >
@@ -261,6 +274,55 @@ export default function ProductDetail() {
           {saving ? t[language].saveButtonPending : t[language].saveButton}
         </Text>
       </Pressable>
+
+      {/* Bouton supprimer */}
+      <Pressable
+        className="border border-red-500 py-3 rounded-lg mb-10"
+        onPress={() => setDeleteModalOpen(true)}
+        disabled={deleting}
+      >
+        <Text className="text-red-500 text-center font-VictorMonoBold">
+          {deleting ? "Suppression..." : "Supprimer le produit"}
+        </Text>
+      </Pressable>
+
+      {/* Modal de confirmation de suppression */}
+      <Modal visible={deleteModalOpen} transparent animationType="fade">
+        <Pressable
+          className="flex-1 bg-black/40 justify-center px-6"
+          onPress={() => setDeleteModalOpen(false)}
+        >
+          <View className="rounded-xl p-6" style={bg}>
+            <Text className="text-lg font-VictorMonoBold mb-2" style={text}>
+              Supprimer le produit ?
+            </Text>
+            <Text className="font-SpaceGroteskRegular text-gray-400 mb-6">
+              Cette action est irréversible. Le produit sera définitivement supprimé.
+            </Text>
+            <View className="flex-row gap-3">
+              <Pressable
+                className="flex-1 border border-gray-300 py-3 rounded-lg"
+                onPress={() => setDeleteModalOpen(false)}
+              >
+                <Text className="text-center font-SpaceGroteskBold" style={text}>
+                  Annuler
+                </Text>
+              </Pressable>
+              <Pressable
+                className="flex-1 bg-red-500 py-3 rounded-lg"
+                onPress={() => {
+                  setDeleteModalOpen(false);
+                  handleDelete();
+                }}
+              >
+                <Text className="text-white text-center font-SpaceGroteskBold">
+                  Supprimer
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
 
       {/* Historique */}
       <Text className="text-xl font-VictorMonoBold mb-4" style={text}>
